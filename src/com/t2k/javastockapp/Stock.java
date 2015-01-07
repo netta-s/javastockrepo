@@ -10,7 +10,11 @@ public class Stock {
 	private float bid;
 	private Date date;
 	
-	//C'tor
+	//C'tors
+	public Stock() {
+		this("undefined", -1, -1, new Date());
+	}
+	
 	public Stock(String symbol, float ask, float bid, Date date) {
 		setSymbol(symbol);
 		setAsk(ask);

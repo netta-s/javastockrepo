@@ -14,23 +14,22 @@ public class StockDetailsServlet extends HttpServlet {
 		resp.setContentType("text/html");
 				
 		//Create 3 Stock instances
+		Date date = new Date(1416009600000L);
+		
 		String pihSymbol = "PIH";
 		float pihAsk = 13.1f;
 		float pihBid = 12.4f;
-		Date pihDate = new Date(1416009600000L);
-		Stock pihStock = new Stock(pihSymbol, pihAsk, pihBid, pihDate);
+		Stock pihStock = new Stock(pihSymbol, pihAsk, pihBid, date);
 		
 		String aalSymbol = "AAL";
 		float aalAsk = 5.78f;
 		float aalBid = 5.5f;
-		Date aalDate = new Date(1416009600000L);
-		Stock aalStock = new Stock(aalSymbol, aalAsk, aalBid, aalDate);
+		Stock aalStock = new Stock(aalSymbol, aalAsk, aalBid, date);
 		
 		String caasSymbol = "CAAS";
 		float caasAsk = 32.2f;
 		float caasBid = 31.5f;
-		Date caasDate = new Date(1416009600000L);
-		Stock caasStock = new Stock(caasSymbol, caasAsk, caasBid, caasDate);		
+		Stock caasStock = new Stock(caasSymbol, caasAsk, caasBid, date);		
 		
 		//Print details to page
 		resp.getWriter().println(pihStock.getHtmlDescription());
