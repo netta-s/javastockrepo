@@ -1,4 +1,4 @@
-package com.t2k.javastockapp;
+package com.t2k.javastockapp.servlet;
 
 import java.io.IOException;
 import java.util.Date;
@@ -8,13 +8,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.t2k.javastockapp.model.Stock;
+
 public class StockDetailsServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
 		resp.setContentType("text/html");
 				
 		//Create 3 Stock instances
-		Date date = new Date(1416009600000L);
+		long date = 1416009600000L;
 		
 		String pihSymbol = "PIH";
 		float pihAsk = 13.1f;

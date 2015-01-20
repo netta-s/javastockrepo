@@ -1,4 +1,4 @@
-package com.t2k.javastockapp;
+package com.t2k.javastockapp.servlet;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
