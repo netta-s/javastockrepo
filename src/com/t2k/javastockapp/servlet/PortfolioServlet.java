@@ -17,8 +17,8 @@ public class PortfolioServlet extends HttpServlet {
 			
 			PortfolioManager portfolioManager = new PortfolioManager();
 			Portfolio portfolio = portfolioManager.getPortfolio();
+			Portfolio portfolioCopy = portfolioManager.duplicatePortfolio(portfolio);
 			
-			Portfolio portfolioCopy = new Portfolio(portfolio);
 			portfolioCopy.setTitle("Portfolio #2");
 
 			resp.getWriter().println(portfolio.getHtmlString());

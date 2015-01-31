@@ -32,4 +32,14 @@ public class PortfolioManager {
 		
 		return portfolio;
 	}
+	
+	/**
+	 * A method that returns a new instance of Portfolio copied from another instance.
+	 * @param portfolio		Portfolio to copy.
+	 * @return a new Portfolio object with the same values as the one given.
+	 */
+	public Portfolio duplicatePortfolio(Portfolio portfolio) {
+		Portfolio copyPortfolio = new Portfolio(portfolio);
+		return copyPortfolio;
+	}
 }

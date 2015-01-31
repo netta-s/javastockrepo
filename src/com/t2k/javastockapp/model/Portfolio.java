@@ -20,7 +20,7 @@ public class Portfolio {
 	 * @return Portfolio object with default values. 
 	 */
 	public Portfolio() {
-		this("undefined", 0, null);
+		this("undefined", 0, new Stock[MAX_PORTFOLIO_SIZE]);
 	}
 	
 	/**
@@ -29,7 +29,18 @@ public class Portfolio {
 	 * @return a new Portfolio object that contains the same values as the given param.
 	 */
 	public Portfolio(Portfolio portfolio) {
-		this(portfolio.getTitle(), portfolio.getPortfolioSize(), portfolio.getStocks());
+		String title = new String(portfolio.getTitle());
+		int portfolioSize = portfolio.getPortfolioSize();
+		Stock[] stocks = new Stock[MAX_PORTFOLIO_SIZE];
+		Stock[] stocksToCopy = portfolio.getStocks();
+		
+		for (int i = 0; i < portfolioSize; i++) {
+			stocks[i] = new Stock(stocksToCopy[i]);
+		}
+		
+		setTitle(title);
+		setPortfolioSize(portfolioSize);
+		setStocks(stocks);
 	}
 	
 	/**
@@ -64,10 +75,7 @@ public class Portfolio {
 	}
 
 	public void setStocks(Stock[] stocks) {
-		this.stocks = new Stock[MAX_PORTFOLIO_SIZE];
-		for(int i = 0; i < portfolioSize; i++) {
-			this.stocks[i] = new Stock(stocks[i]);
-		}
+		this.stocks = stocks;
 	}
 	
 	private void setPortfolioSize(int portfolioSize) {

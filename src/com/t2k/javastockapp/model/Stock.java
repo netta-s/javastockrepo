@@ -12,15 +12,16 @@ import java.util.Date;
  */
 public class Stock {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+	private final static int BUY = 0;
+	private final static int SELL = 1;
+	private final static int REMOVE = 2;
+	private final static int HOLD = 3;
 	private String symbol;
 	private float ask;
 	private float bid;
 	private int recommendation;
 	private int stockQuantity;
 	private Date date;
-	public enum Action {
-		BUY, SELL, REMOVE, HOLD
-	}
 	
 	//C'tors	
 	/**
@@ -50,7 +51,7 @@ public class Stock {
 	 */
 	
 	public Stock(Stock stock) {
-		this(stock.getSymbol(), stock.getAsk(), stock.getBid(), stock.getRecommendation(), stock.getStockQuantity(), stock.getDate().getTime());
+		this(new String(stock.getSymbol()), stock.getAsk(), stock.getBid(), stock.getRecommendation(), stock.getStockQuantity(), stock.getDate().getTime());
 	}
 	
 	/**
