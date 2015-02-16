@@ -12,16 +12,18 @@ import java.util.Date;
  */
 public class Stock {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-	private final static int BUY = 0;
-	private final static int SELL = 1;
-	private final static int REMOVE = 2;
-	private final static int HOLD = 3;
 	private String symbol;
 	private float ask;
 	private float bid;
-	private int recommendation;
 	private int stockQuantity;
 	private Date date;
+	public enum ALGO_RECOMMENDATION {
+		BUY,
+		SELL,
+		REMOVE,
+		HOLD
+	}
+	private ALGO_RECOMMENDATION recommendation;
 	
 	//C'tors	
 	/**
@@ -41,7 +43,7 @@ public class Stock {
 	 * @return Stock object with the above values. date returns as Date object. 
 	 */
 	public Stock(String symbol, float ask, float bid, long date) {
-		this(symbol, ask, bid, -1, -1, date);
+		this(symbol, ask, bid, ALGO_RECOMMENDATION.HOLD, -1, date);
 	}
 	
 	/**
@@ -59,12 +61,12 @@ public class Stock {
 	 * @param symbol			string that represents the company symbol
 	 * @param ask				int that represents offer price
 	 * @param bid				int that represents the bid price
-	 * @param recommendation	int that represents a suggested action for the given stock.
+	 * @param recommendation	ALGO_RECOMMENDATION that represents a suggested action for the given stock.
 	 * @param stockQuantity		int that represents the number of stocks.
 	 * @param date				long that represents a date in epoch time
 	 * @return Stock object with the above values. date returns as Date object. 
 	 */
-	public Stock(String symbol, float ask, float bid, int recommendation, int stockQuantity, long date) {
+	public Stock(String symbol, float ask, float bid, ALGO_RECOMMENDATION recommendation, int stockQuantity, long date) {
 		setSymbol(symbol);
 		setAsk(ask);
 		setBid(bid);
@@ -86,7 +88,7 @@ public class Stock {
 		return bid;
 	}
 	
-	public int getRecommendation() {
+	public ALGO_RECOMMENDATION getRecommendation() {
 		return recommendation;
 	}
 	
@@ -111,7 +113,7 @@ public class Stock {
 		this.bid = bid;
 	}
 	
-	public void setRecommendation(int recommendation) {
+	public void setRecommendation(ALGO_RECOMMENDATION recommendation) {
 		this.recommendation = recommendation;
 	}
 	
