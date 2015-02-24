@@ -2,7 +2,7 @@ package com.t2k.javastockapp.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import com.t2k.javastockapp.service.PortfolioManager.*;
+import com.t2k.javastockapp.service.PortfolioManager.ALGO_RECOMMENDATION;
 
 /**
  * Stock Model object.

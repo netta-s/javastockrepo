@@ -3,7 +3,7 @@ package com.t2k.javastockapp.service;
 import com.t2k.javastockapp.model.*;
 
 public class PortfolioManager {
-	private Portfolio portfolio;
+	private Portfolio myPortfolio;
 	public enum ALGO_RECOMMENDATION {
 		BUY,
 		SELL,
@@ -13,31 +13,33 @@ public class PortfolioManager {
 	
 	//Getters
 	public Portfolio getPortfolio() {
-		portfolio = new Portfolio();
+		myPortfolio = new Portfolio();
+		myPortfolio.setTitle("Exercise 7 Portfolio");
+		myPortfolio.setBalance(10000);
 		
-		long date = 1416009600000L;
+		long date = 1418594400000L;
 		String pihSymbol = "PIH";
-		float pihAsk = 13.1f;
-		float pihBid = 12.4f;
+		float pihAsk = 10.0f;
+		float pihBid = 8.5f;
 		Stock pihStock = new Stock(pihSymbol, pihAsk, pihBid, date);
-		portfolio.addStock(pihStock);
+		myPortfolio.buyStock(pihStock, 20);
 		
 		String aalSymbol = "AAL";
-		float aalAsk = 5.78f;
-		float aalBid = 5.5f;
+		float aalAsk = 30.0f;
+		float aalBid = 25.5f;
 		Stock aalStock = new Stock(aalSymbol, aalAsk, aalBid, date);
-		portfolio.addStock(aalStock);
+		myPortfolio.buyStock(aalStock, 30);
 		
 		String caasSymbol = "CAAS";
-		float caasAsk = 32.2f;
-		float caasBid = 31.5f;
+		float caasAsk = 20.0f;
+		float caasBid = 15.5f;
 		Stock caasStock = new Stock(caasSymbol, caasAsk, caasBid, date);		
-		portfolio.addStock(caasStock);
+		myPortfolio.buyStock(caasStock, 40);
 		
-		portfolio.setTitle("Exercise 7 portfolio");
-		portfolio.setBalance(10000);
+		myPortfolio.sellStock(aalSymbol, -1);
+		myPortfolio.removeStock(caasSymbol);
 		
-		return portfolio;
+		return myPortfolio;
 	}
 	
 	/**

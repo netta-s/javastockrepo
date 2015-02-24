@@ -103,18 +103,21 @@ public class Portfolio {
 	 * @return true if succeeded, false if you already reached the maximum size of the portfolio.
 	 * 		   (represented by MAX_PORTFOLIO_SIZE).
 	 */
-	public Boolean addStock(Stock stock) {
-		if (portfolioSize < MAX_PORTFOLIO_SIZE) {
-			for (int i = 0; i < portfolioSize; i++) {
-				if (stocks[i].getSymbol().equals(stock.getSymbol())) {
-					return false;
+	public Boolean addStock(Stock stock, int quantity) {
+		Stock foundStock = findStock(stock.getSymbol());
+		if (foundStock == null) {
+			if (portfolioSize < MAX_PORTFOLIO_SIZE) {
+				if (quantity > 0) {
+					stock.setStockQuantity(quantity);
+				} else {
+					stock.setStockQuantity(0);
 				}
+				stocks[portfolioSize] = stock;
+				setPortfolioSize(portfolioSize + 1);
+				return true;
 			}
-			stocks[portfolioSize] = stock;
-			portfolioSize++;
-			return true;
+			System.out.println("Can't add new stock, portfolio can only have " + MAX_PORTFOLIO_SIZE + " stocks.");
 		}
-		System.out.println("Can't add new stock, portfolio can have only " + MAX_PORTFOLIO_SIZE + "stocks.");
 		return false;
 	}
 	
@@ -123,7 +126,7 @@ public class Portfolio {
 	 * Takes care of decrementing the portfolio size accordingly.
 	 * @param index		int that represents the position of the stock in the portfolio.
 	 */
-	public void removeStock(int index) {
+	private void removeStock(int index) {
 		for (int i = index; i < portfolioSize; i++) {
 			if (i != portfolioSize - 1) {
 				stocks[i] = stocks[i + 1];
@@ -136,29 +139,18 @@ public class Portfolio {
 	
 	/**
 	 * A method that removes a stock from the portfolio.
-	 * Takes care of decrementing the portfolio size accordingly.
+	 * Sells the stock that was provided. 
 	 * @param symbol		string that represents the symbol of the stock to remove from the portfolio.
-	 * @return true if succeeded, false if not. 
 	 */
 	public Boolean removeStock(String symbol) {
 		boolean removed = false;
-		boolean sameStock;
 		for (int i = 0; i < portfolioSize; i++) {
-			sameStock = stocks[i].getSymbol().equals(symbol);
-			if (sameStock) {
+			if (stocks[i].getSymbol().equals(symbol)) {
 				sellStock(symbol, -1);
+				removeStock(i);
 				removed = true;
+				break;
 			}
-			if (sameStock || removed) {
-				if (i != portfolioSize - 1) {
-					stocks[i] = stocks[i + 1];
-				} else {
-					stocks[i] = null;
-				}
-			}
-		}
-		if (removed) {
-			setPortfolioSize(portfolioSize - 1);
 		}
 		return removed;
 	}
@@ -182,7 +174,7 @@ public class Portfolio {
 				sold = true;
 			} else if (stockQuantityLeft >= 0) {
 				stock.setStockQuantity(stockQuantityLeft);
-				updateBalance(currentStockQuantity * stock.getBid());
+				updateBalance(quantity * stock.getBid());
 				sold = true;
 			} else {
 				System.out.println("Not enough stocks to sell.");
@@ -193,42 +185,49 @@ public class Portfolio {
 	
 	/**
 	 * A method that buys a stock to the portfolio.
-	 * @param symbol		string that represents the symbol of the stock to sell.
-	 * @param quantity		int that represents the amount of stocks to sell. If quantity is -1, 
+	 * @param symbol		string that represents the symbol of the stock to buy.
+	 * @param quantity		int that represents the amount of stocks to buy. If quantity is -1, 
 	 * 						all the remaining balance will be used to buy the stock.
 	 * @return true if succeeded, false if not.
 	 */
-	public Boolean buyStock(String symbol, int quantity) {
+	public Boolean buyStock(Stock stock, int quantity) {
 		boolean bought = false;
-		Stock stock = findStock(symbol);
-		if (quantity >= -1 && stock != null) {
-			int currentStockQuantity = stock.getStockQuantity();
-			int newStockQuantity;
-			float stockAsk = stock.getAsk();
-			float balanceLeft;
-			if (quantity == -1) {
-				if (balance < stockAsk) {
-					System.out.println("Not enough balance to complete purchase.");
-				} else {
-					float balanceAskRemainder = balance % stockAsk;
-					quantity = (int) (balance / stockAsk);
-					newStockQuantity = (int) (currentStockQuantity + quantity);
-					stock.setStockQuantity(newStockQuantity);
-					if (balanceAskRemainder != 0) {
-						float amount = quantity * stockAsk;
-						bought = updateBalance(-amount);
-					} else {
-						bought = updateBalance(-balance);
-					}
-				}
-				bought = true;
-			} else if (updateBalance(-(quantity * stockAsk))) {
-				newStockQuantity = currentStockQuantity + quantity;
-				stock.setStockQuantity(newStockQuantity);
-				bought = true;
-			} else {
+		float ask = stock.getAsk();
+		if (quantity == -1) {
+			quantity = (int)(balance / ask);
+			if (quantity == 0) {
 				System.out.println("Not enough balance to complete purchase.");
+			} else {
+				bought = completeStockPurchase(stock, quantity);
 			}
+		} else if (ask * quantity > balance) {
+			System.out.println("Not enough balance to complete purchase.");
+		} else {
+			bought = completeStockPurchase(stock, quantity);
+		}
+		return bought;
+	}
+	
+	/**
+	 * A method that completes the purchasing process of a stock.
+	 * Decreases the balance and takes care of adding a new stock to the Stocks array or updating an existing stock.
+	 * @param stock			Stock the stock to purchase.
+	 * @param quantity		int that represents the amount of stocks to buy. 
+	 * 						all the remaining balance will be used to buy the stock.
+	 * @return true if succeeded, false if not.
+	 */
+	private Boolean completeStockPurchase(Stock stock, int quantity) {
+		boolean bought = false;
+		int currentStockQuantity = stock.getStockQuantity();
+		float ask = stock.getAsk();
+		String symbol = stock.getSymbol();
+		if (findStock(symbol) != null) {
+			stock.setStockQuantity(currentStockQuantity + quantity);
+			updateBalance(-(ask * quantity));
+			bought = true;
+		} else if (addStock(stock, quantity)) {
+			updateBalance(-(ask * quantity));
+			bought = true;
 		}
 		return bought;
 	}
@@ -238,7 +237,7 @@ public class Portfolio {
 	 * @param symbol		string that represents the symbol of the stock to find.
 	 * @return Stock instance if found, null if stock symbol isn't found in Stock[].
 	 */
-	public Stock findStock(String symbol) {
+	private Stock findStock(String symbol) {
 		for (int i = 0; i < portfolioSize; i++) {
 			if (stocks[i].getSymbol().equals(symbol)) {
 				return stocks[i];
