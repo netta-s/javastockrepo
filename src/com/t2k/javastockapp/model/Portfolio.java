@@ -178,37 +178,56 @@ public class Portfolio {
 			int stockQuantityLeft = currentStockQuantity - quantity;
 			if (quantity == -1) {
 				stock.setStockQuantity(0);
-				balance += currentStockQuantity * stock.getBid();
+				updateBalance(currentStockQuantity * stock.getBid());
 				sold = true;
 			} else if (stockQuantityLeft >= 0) {
 				stock.setStockQuantity(stockQuantityLeft);
-				balance += stockQuantityLeft * stock.getBid();
+				updateBalance(currentStockQuantity * stock.getBid());
 				sold = true;
 			} else {
-				System.out.println("Not enough stocks to sell");
+				System.out.println("Not enough stocks to sell.");
 			}
 		}
 		return sold;
 	}
 	
+	/**
+	 * A method that buys a stock to the portfolio.
+	 * @param symbol		string that represents the symbol of the stock to sell.
+	 * @param quantity		int that represents the amount of stocks to sell. If quantity is -1, 
+	 * 						all the remaining balance will be used to buy the stock.
+	 * @return true if succeeded, false if not.
+	 */
 	public Boolean buyStock(String symbol, int quantity) {
 		boolean bought = false;
 		Stock stock = findStock(symbol);
 		if (quantity >= -1 && stock != null) {
 			int currentStockQuantity = stock.getStockQuantity();
-			int stockQuantityLeft = currentStockQuantity - quantity;
+			int newStockQuantity;
+			float stockAsk = stock.getAsk();
 			float balanceLeft;
 			if (quantity == -1) {
-				float balanceAskRemainder = balance % stock.getAsk();
-				if (balanceAskRemainder != 0.0) {
-					balance = 0;
-					//stock.setStockQuantity();
+				if (balance < stockAsk) {
+					System.out.println("Not enough balance to complete purchase.");
 				} else {
-					balance -= (balance - balanceAskRemainder) * stock.getAsk();
+					float balanceAskRemainder = balance % stockAsk;
+					quantity = (int) (balance / stockAsk);
+					newStockQuantity = (int) (currentStockQuantity + quantity);
+					stock.setStockQuantity(newStockQuantity);
+					if (balanceAskRemainder != 0) {
+						float amount = quantity * stockAsk;
+						bought = updateBalance(-amount);
+					} else {
+						bought = updateBalance(-balance);
+					}
 				}
 				bought = true;
+			} else if (updateBalance(-(quantity * stockAsk))) {
+				newStockQuantity = currentStockQuantity + quantity;
+				stock.setStockQuantity(newStockQuantity);
+				bought = true;
 			} else {
-				
+				System.out.println("Not enough balance to complete purchase.");
 			}
 		}
 		return bought;
@@ -237,17 +256,43 @@ public class Portfolio {
 		for(int i = 0; i < portfolioSize; i++) {
 			portfolioHtmlString += getStocks()[i].getHtmlDescription() + "<br>";
 		}
+		portfolioHtmlString += "<br>Total portfolio value: " + getTotalValue() + 
+								"$.<br>Total stocks value: " + getStocksValue() + 
+								"$. Balance: " + getBalance() + "$";
 		return portfolioHtmlString;
 	}
 	
 	/**
 	 * A method to increase (or decrease, via a negative param) balance value.
-	 * Cannot be added 
 	 * @param amount		float that represents how much you want to add/subtract to/from balance.
+	 * @return true if succeeded, false if not.
 	 */
-	public void updateBalance(float amount) {
-		if (balance + amount > 0) {
+	public Boolean updateBalance(float amount) {
+		boolean updated = false;
+		if (balance + amount >= 0) {
 			balance += amount;
+			updated = true;
 		}
+		return updated;
+	}
+	
+	/**
+	 * A method that returns the total value of all stocks in the portfolio.
+	 * @return a float that represents the value.
+	 */
+	public float getStocksValue() {
+		float value = 0;
+		for (int i = 0; i < portfolioSize; i++) {
+			value += stocks[i].getBid() * stocks[i].getStockQuantity();
+		}
+		return value;
+	}
+	
+	/**
+	 * A method that returns the total value the portfolio (the balance + the stocks value).
+	 * @return a float that represents the value.
+	 */
+	public float getTotalValue() {
+		return getStocksValue() + getBalance();
 	}
 }

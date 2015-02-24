@@ -2,6 +2,7 @@ package com.t2k.javastockapp.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import com.t2k.javastockapp.service.PortfolioManager.*;
 
 /**
  * Stock Model object.
@@ -17,12 +18,6 @@ public class Stock {
 	private float bid;
 	private int stockQuantity;
 	private Date date;
-	public enum ALGO_RECOMMENDATION {
-		BUY,
-		SELL,
-		REMOVE,
-		HOLD
-	}
 	private ALGO_RECOMMENDATION recommendation;
 	
 	//C'tors	

@@ -4,6 +4,12 @@ import com.t2k.javastockapp.model.*;
 
 public class PortfolioManager {
 	private Portfolio portfolio;
+	public enum ALGO_RECOMMENDATION {
+		BUY,
+		SELL,
+		REMOVE,
+		HOLD
+	}
 	
 	//Getters
 	public Portfolio getPortfolio() {
@@ -28,7 +34,8 @@ public class PortfolioManager {
 		Stock caasStock = new Stock(caasSymbol, caasAsk, caasBid, date);		
 		portfolio.addStock(caasStock);
 		
-		portfolio.setTitle("My Portfolio");
+		portfolio.setTitle("Exercise 7 portfolio");
+		portfolio.setBalance(10000);
 		
 		return portfolio;
 	}
